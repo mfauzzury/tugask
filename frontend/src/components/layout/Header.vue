@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useTaskModal } from '../../composables/useTaskModal';
+import { useAuth } from '../../composables/useAuth';
 
 const { openModal } = useTaskModal();
+const { currentUser, logout } = useAuth();
+const showUserMenu = ref(false);
 </script>
 
 <template>
@@ -29,6 +33,42 @@ const { openModal } = useTaskModal();
       <button @click="openModal" class="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
         + New Task
       </button>
+
+      <!-- User Menu -->
+      <div class="relative">
+        <button
+          @click="showUserMenu = !showUserMenu"
+          class="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2 transition-colors"
+        >
+          <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+            <span class="text-xs font-bold text-gray-700">{{ currentUser?.name?.charAt(0).toUpperCase() }}</span>
+          </div>
+          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div
+          v-if="showUserMenu"
+          @click="showUserMenu = false"
+          class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+        >
+          <div class="px-4 py-2 border-b border-gray-200">
+            <p class="text-sm font-medium text-gray-900">{{ currentUser?.name }}</p>
+            <p class="text-xs text-gray-500">{{ currentUser?.email }}</p>
+          </div>
+          <button
+            @click="logout"
+            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 </template>

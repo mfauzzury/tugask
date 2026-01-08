@@ -15,9 +15,40 @@ const recentActivity = ref([
 ]);
 
 const myWorkload = ref([
-  { id: 101, title: 'Review PRs', due: 'Today', status: 'In Progress' },
-  { id: 102, title: 'Update Documentation', due: 'Tomorrow', status: 'Todo' },
-  { id: 103, title: 'Client Meeting', due: 'Friday', status: 'Todo' },
+  { 
+    id: 101, 
+    title: 'Review PRs', 
+    due: 'Today', 
+    status: 'In Progress', 
+    progress: 75,
+    subtasks: [
+      { id: 1, text: 'Review backend PR', completed: true },
+      { id: 2, text: 'Review frontend PR', completed: true },
+      { id: 3, text: 'Test changes', completed: false },
+    ]
+  },
+  { 
+    id: 102, 
+    title: 'Update Documentation', 
+    due: 'Tomorrow', 
+    status: 'Todo', 
+    progress: 20,
+    subtasks: [
+      { id: 1, text: 'Update API docs', completed: true },
+      { id: 2, text: 'Update user guide', completed: false },
+      { id: 3, text: 'Add examples', completed: false },
+      { id: 4, text: 'Review grammar', completed: false },
+      { id: 5, text: 'Publish changes', completed: false },
+    ]
+  },
+  { 
+    id: 103, 
+    title: 'Client Meeting', 
+    due: 'Friday', 
+    status: 'Todo', 
+    progress: 0,
+    subtasks: []
+  },
 ]);
 </script>
 
@@ -54,12 +85,31 @@ const myWorkload = ref([
           <div class="p-4">
             <div class="space-y-2">
               <div v-for="task in myWorkload" :key="task.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer border border-gray-100/50">
-                <div>
-                   <h4 class="font-medium text-sm text-gray-900">{{ task.title }}</h4>
-                   <p class="text-[10px] text-gray-500">Due: {{ task.due }}</p>
+                <div class="flex-1">
+                   <div class="flex items-center gap-2 mb-1">
+                     <h4 class="font-medium text-sm text-gray-900">{{ task.title }}</h4>
+                     <span v-if="task.subtasks && task.subtasks.length > 0" class="flex items-center gap-1 text-[10px] text-gray-500">
+                       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                       </svg>
+                       {{ task.subtasks.filter((s: any) => s.completed).length }}/{{ task.subtasks.length }}
+                     </span>
+                   </div>
+                   <p class="text-[10px] text-gray-500 mb-1.5">Due: {{ task.due }}</p>
+                   
+                   <!-- Progress Meter -->
+                   <div class="flex items-center gap-2">
+                     <div class="flex-1 bg-gray-200 rounded-full h-1.5 overflow-hidden max-w-[200px]">
+                       <div 
+                         class="bg-black h-full rounded-full transition-all duration-300"
+                         :style="{ width: `${task.progress || 0}%` }"
+                       ></div>
+                     </div>
+                     <span class="text-[10px] font-medium text-gray-600 w-8 text-right">{{ task.progress || 0 }}%</span>
+                   </div>
                 </div>
                 <span 
-                  class="px-2 py-0.5 rounded-full text-[10px] font-medium"
+                  class="px-2 py-0.5 rounded-full text-[10px] font-medium ml-3"
                   :class="task.status === 'Todo' ? 'bg-gray-200 text-gray-800' : 'bg-black text-white'"
                 >
                   {{ task.status }}

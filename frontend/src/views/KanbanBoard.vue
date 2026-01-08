@@ -39,12 +39,45 @@ onMounted(() => {
   // Add some mock tasks for demonstration
   if (buckets.value.length > 0) {
     tasksByBucket.value[buckets.value[0].id] = [
-      { id: 1, title: 'Research Competitors', due: 'Jan 15', description: 'Analyze top 3 competitors' },
-      { id: 2, title: 'Draft Proposal', due: 'Jan 18', description: 'Create initial project proposal' },
+      { 
+        id: 1, 
+        title: 'Research Competitors', 
+        due: 'Jan 15', 
+        description: 'Analyze top 3 competitors', 
+        progress: 65,
+        subtasks: [
+          { id: 1, text: 'Identify top competitors', completed: true },
+          { id: 2, text: 'Analyze pricing models', completed: true },
+          { id: 3, text: 'Review feature sets', completed: false },
+        ]
+      },
+      { 
+        id: 2, 
+        title: 'Draft Proposal', 
+        due: 'Jan 18', 
+        description: 'Create initial project proposal', 
+        progress: 30,
+        subtasks: [
+          { id: 1, text: 'Outline key points', completed: true },
+          { id: 2, text: 'Write introduction', completed: false },
+          { id: 3, text: 'Add budget section', completed: false },
+          { id: 4, text: 'Review and edit', completed: false },
+        ]
+      },
     ];
     if (buckets.value.length > 1) {
       tasksByBucket.value[buckets.value[1].id] = [
-        { id: 3, title: 'Design Homepage', due: 'Jan 20', description: 'Mockup for homepage' },
+        { 
+          id: 3, 
+          title: 'Design Homepage', 
+          due: 'Jan 20', 
+          description: 'Mockup for homepage', 
+          progress: 85,
+          subtasks: [
+            { id: 1, text: 'Create wireframe', completed: true },
+            { id: 2, text: 'Design mockup', completed: true },
+          ]
+        },
       ];
     }
   }
@@ -184,7 +217,26 @@ const log = (evt: any) => {
               class="bg-white p-3 rounded shadow-sm border border-gray-200 cursor-pointer hover:shadow-md hover:border-gray-300 transition-all"
             >
               <div class="text-sm font-medium mb-1">{{ element.title }}</div>
-              <div class="text-[10px] text-gray-500">{{ element.due }}</div>
+              <div class="flex items-center gap-2 text-[10px] text-gray-500 mb-2">
+                <span>{{ element.due }}</span>
+                <span v-if="element.subtasks && element.subtasks.length > 0" class="flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                  {{ element.subtasks.filter((s: any) => s.completed).length }}/{{ element.subtasks.length }}
+                </span>
+              </div>
+              
+              <!-- Progress Meter -->
+              <div class="flex items-center gap-2">
+                <div class="flex-1 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                  <div 
+                    class="bg-black h-full rounded-full transition-all duration-300"
+                    :style="{ width: `${element.progress || 0}%` }"
+                  ></div>
+                </div>
+                <span class="text-[10px] font-medium text-gray-600 w-8 text-right">{{ element.progress || 0 }}%</span>
+              </div>
             </div>
           </template>
         </draggable>
